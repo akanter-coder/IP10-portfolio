@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>March Madness Portfolio Builder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .budget-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .budget-row {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .budget-item {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .budget-item h3 {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .budget-item .amount {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .status {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .status.under {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        .status.over {
+            background: rgba(255, 59, 48, 0.3);
+            color: #fff;
+        }
+
+        .status.perfect {
+            background: rgba(52, 199, 89, 0.3);
+            color: #fff;
+        }
+
+        .student-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .input-group input {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .teams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .team-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 15px;
+            transition: all 0.3s;
+        }
+
+        .team-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        .team-card.selected {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .team-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .team-name {
+            font-weight: 700;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .team-price {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1em;
+        }
+
+        .volatility {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .volatility.positive {
+            color: #34c759;
+        }
+
+        .volatility.negative {
+            color: #ff3b30;
+        }
+
+        .volatility.new {
+            color: #007aff;
+        }
+
+        .quantity-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quantity-input input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .quantity-input input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .team-total {
+            margin-top: 8px;
+            font-weight: 600;
+            color: #333;
+            text-align: right;
+        }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        @media (max-width: 768px) {
+            .student-info {
+                grid-template-columns: 1fr;
+            }
+
+            .teams-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .budget-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏀 March Madness Portfolio Builder</h1>
+        <p class="subtitle">Invest your $500 wisely across college basketball teams!</p>
+
+        <div class="budget-display">
+            <div class="budget-row">
+                <div class="budget-item">
+                    <h3>Starting Budget</h3>
+                    <div class="amount">$500.00</div>
+                </div>
+                <div class="budget-item">
+                    <h3>Spent</h3>
+                    <div class="amount" id="spent">$0.00</div>
+                </div>
+                <div class="budget-item">
+                    <h3>Remaining</h3>
+                    <div class="amount" id="remaining">$500.00</div>
+                </div>
+            </div>
+            <div class="status under" id="status">UNDER BUDGET</div>
+        </div>
+
+        <div class="student-info">
+            <div class="input-group">
+                <label for="studentName">Student Name:</label>
+                <input type="text" id="studentName" placeholder="Enter your name">
+            </div>
+            <div class="input-group">
+                <label for="studentGrade">Grade:</label>
+                <input type="text" id="studentGrade" placeholder="Enter your grade">
+            </div>
+        </div>
+
+        <div class="teams-grid" id="teamsGrid"></div>
+
+        <div class="actions">
+            <button class="btn-secondary" onclick="resetPortfolio()">Reset Portfolio</button>
+            <button class="btn-primary" onclick="submitPortfolio()">Email to Adam</button>
+        </div>
+    </div>
+
+    <script>
+        const BUDGET = 500;
+        
+        const teams = [
+            { name: "Michigan", price: 79.77, volatility: 3.42 },
+            { name: "Arizona", price: 74.12, volatility: 3.09 },
+            { name: "Iowa St.", price: 61.71, volatility: 3.09 },
+            { name: "Gonzaga", price: 49.00, volatility: 11.04 },
+            { name: "Purdue", price: 47.79, volatility: -24.01 },
+            { name: "Duke", price: 76.94, volatility: 0.10 },
+            { name: "Connecticut", price: 55.23, volatility: 19.71 },
+            { name: "Vanderbilt", price: 29.79, volatility: -26.62 },
+            { name: "Illinois", price: 56.78, volatility: -6.51 },
+            { name: "Houston", price: 66.79, volatility: 11.72 },
+            { name: "BYU", price: 26.09, volatility: -33.11 },
+            { name: "Florida", price: 54.08, volatility: -10.30 },
+            { name: "Michigan St.", price: 53.25, volatility: -3.53 },
+            { name: "Louisville", price: 30.00, volatility: -15.23 },
+            { name: "Tennessee", price: 32.93, volatility: 14.44 },
+            { name: "Kansas", price: 48.95, volatility: 45.99 },
+            { name: "Texas Tech", price: 42.60, volatility: null },
+            { name: "Saint Louis", price: 23.60, volatility: null },
+            { name: "Clemson", price: 23.16, volatility: null },
+            { name: "St. Johns", price: 40.79, volatility: 8.15 },
+            { name: "North Carolina", price: 42.71, volatility: 139.49 },
+            { name: "Nebraska", price: 45.77, volatility: null },
+            { name: "Virginia", price: 29.24, volatility: null },
+            { name: "Arkansas", price: 29.00, volatility: null },
+            { name: "Miami", price: 10.74, volatility: null }
+        ];
+
+        function initializeTeams() {
+            const grid = document.getElementById('teamsGrid');
+            grid.innerHTML = '';
+
+            teams.forEach((team, index) => {
+                const card = document.createElement('div');
+                card.className = 'team-card';
+                card.id = `team-${index}`;
+
+                let volatilityClass = 'volatility';
+                let volatilityText = '';
+                
+                if (team.volatility === null) {
+                    volatilityClass += ' new';
+                    volatilityText = '📊 New Stock';
+                } else if (team.volatility > 0) {
+                    volatilityClass += ' positive';
+                    volatilityText = `📈 +${team.volatility.toFixed(2)}%`;
+                } else {
+                    volatilityClass += ' negative';
+                    volatilityText = `📉 ${team.volatility.toFixed(2)}%`;
+                }
+
+                card.innerHTML = `
+                    <div class="team-header">
+                        <div class="team-name">${team.name}</div>
+                        <div class="team-price">$${team.price.toFixed(2)}</div>
+                    </div>
+                    <div class="${volatilityClass}">${volatilityText}</div>
+                    <div class="quantity-input">
+                        <label>Quantity:</label>
+                        <input 
+                            type="number" 
+                            id="qty-${index}" 
+                            min="0" 
+                            value="0" 
+                            onchange="updateBudget()"
+                            oninput="updateBudget()"
+                        >
+                    </div>
+                    <div class="team-total" id="total-${index}">Total: $0.00</div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        function updateBudget() {
+            let totalSpent = 0;
+
+            teams.forEach((team, index) => {
+                const qtyInput = document.getElementById(`qty-${index}`);
+                const qty = parseFloat(qtyInput.value) || 0;
+                const total = qty * team.price;
+                
+                document.getElementById(`total-${index}`).textContent = `Total: $${total.toFixed(2)}`;
+                
+                const card = document.getElementById(`team-${index}`);
+                if (qty > 0) {
+                    card.classList.add('selected');
+                } else {
+                    card.classList.remove('selected');
+                }
+
+                totalSpent += total;
+            });
+
+            const remaining = BUDGET - totalSpent;
+
+            document.getElementById('spent').textContent = `$${totalSpent.toFixed(2)}`;
+            document.getElementById('remaining').textContent = `$${remaining.toFixed(2)}`;
+
+            const statusEl = document.getElementById('status');
+            if (remaining < 0) {
+                statusEl.textContent = `OVER BUDGET by $${Math.abs(remaining).toFixed(2)}`;
+                statusEl.className = 'status over';
+            } else if (remaining === 0) {
+                statusEl.textContent = 'PERFECT! All $500 Invested';
+                statusEl.className = 'status perfect';
+            } else {
+                statusEl.textContent = `UNDER BUDGET - $${remaining.toFixed(2)} left to invest`;
+                statusEl.className = 'status under';
+            }
+        }
+
+        function resetPortfolio() {
+            teams.forEach((team, index) => {
+                document.getElementById(`qty-${index}`).value = 0;
+            });
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentGrade').value = '';
+            updateBudget();
+        }
+
+        function submitPortfolio() {
+            const name = document.getElementById('studentName').value;
+            const grade = document.getElementById('studentGrade').value;
+            const spent = document.getElementById('spent').textContent;
+            const remaining = document.getElementById('remaining').textContent;
+
+            if (!name || !grade) {
+                alert('Please enter your name and grade before submitting!');
+                return;
+            }
+
+            let totalSpent = 0;
+            teams.forEach((team, index) => {
+                const qty = parseFloat(document.getElementById(`qty-${index}`).value) || 0;
+                totalSpent += qty * team.price;
+            });
+
+            if (totalSpent > BUDGET) {
+                alert(`You're over budget! Please reduce your investments by $${(totalSpent - BUDGET).toFixed(2)}`);
+                return;
+            }
+
+            if (totalSpent === 0) {
+                alert('Please select at least one team to invest in!');
+                return;
+            }
+
+            // Build email body
+            let emailBody = `March Madness Portfolio Submission%0D%0A%0D%0A`;
+            emailBody += `Student: ${encodeURIComponent(name)}%0D%0A`;
+            emailBody += `Grade: ${encodeURIComponent(grade)}%0D%0A`;
+            emailBody += `Total Invested: ${encodeURIComponent(spent)}%0D%0A`;
+            emailBody += `Remaining: ${encodeURIComponent(remaining)}%0D%0A%0D%0A`;
+            emailBody += `Investments:%0D%0A`;
+
+            teams.forEach((team, index) => {
+                const qty = parseFloat(document.getElementById(`qty-${index}`).value) || 0;
+                if (qty > 0) {
+                    const total = qty * team.price;
+                    emailBody += `• ${encodeURIComponent(team.name)}: ${qty} shares @ $${team.price.toFixed(2)} = $${total.toFixed(2)}%0D%0A`;
+                }
+            });
+
+            // Create mailto link
+            const subject = `Portfolio Submission - ${encodeURIComponent(name)}`;
+            const mailtoLink = `mailto:akanter@gcschool.org?subject=${subject}&body=${emailBody}`;
+            
+            // Open email client
+            window.location.href = mailtoLink;
+            
+            // Show confirmation
+            setTimeout(() => {
+                alert('✅ Your email program should open with your portfolio!\n\nJust click SEND to submit it to your classmate, Adam.');
+            }, 500);
+        }
+
+        // Initialize on load
+        initializeTeams();
+        updateBudget();
+    </script>
+</body>
+</html>
